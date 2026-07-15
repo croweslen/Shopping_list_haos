@@ -1,0 +1,14 @@
+{
+    "Bjs": [
+        {
+            "name": "milk",
+            "quantity": 2,
+            "bought": false
+        },
+        {
+            "name": "paper towels",
+            "quantity": 1,
+            "bought": false
+        }
+    ]
+}
