@@ -23,13 +23,26 @@ async def async_save_data(hass):
 
 ####### STORE FUNCTIONS #########
 
-def createStore():  #will also make list
-      
-    pass
+def createStore(storeName):  # will also make the store's list
+    if storeName == "":
+        raise ValueError("Store name cannot be blank")
 
-def removeStore():
-      
-    pass
+    if storeName in storeList:
+        raise ValueError("Store already exists")
+
+    storeList[storeName] = []
+    save_data()
+
+
+def removeStore(storeName):
+    if storeName == "":
+        raise ValueError("Store name cannot be blank")
+
+    if storeName not in storeList:
+        raise ValueError("Store does not exist")
+    del storeList[storeName]
+    save_data()
+
 
 def get_stores():
      
