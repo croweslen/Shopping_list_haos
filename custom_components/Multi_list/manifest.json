@@ -1,5 +1,5 @@
 {
-    "domain": "shopping_list",
+    "domain": "multi_list",
     "name": "Multi-Store Shopping List",
     "version": "0.1.0",
     "codeowners": ["@croweslen"],
