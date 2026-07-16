@@ -1,4 +1,5 @@
 import json
+import uuid
 
 DATA_FILE = "shopping_data.json"
 storeList = {}
