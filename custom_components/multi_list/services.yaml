@@ -22,9 +22,42 @@ remove_store:
       selector:
         text:
 
-toggle_bought:
-  name: Toggle bought
-  description: Toggles the bought field when an item is marked as bought
+
+add_item:
+  name: Add item
+  description: Adds an item to the selected store
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store being shopped at.
+      required: true
+      example: "Costco"
+      selector:
+        text:
+    item_name:
+      name: Item Name
+      description: The name of the item being added to the stores list
+      required: True 
+      selector: 
+        text:
+    quantity:
+      name: quantity
+      description: The amount of items being added. Default is 1.
+      required: False
+      selector:
+        number:
+        min: 1
+        mode: box
+    notes:
+      name: notes
+      description: Any notes about the given item
+      required: False
+      selector:
+        text:
+         
+remove_item:
+  name: Remove Item
+  description: Removes and item from the list of the selected store
   fields:
     store_name:
       name: Store Name
@@ -39,14 +72,45 @@ toggle_bought:
       required: true
       selector:
         text:
-
-
-
-
-add_item:
-
-remove_item:
-
+    
 clear_full_list:
+  name: Clear full list
+  description: Clears the entierty of a shopping list for the selected store
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store being shopped at.
+      required: true
+      example: "Costco"
+      selector:
+        text:
 
 clear_bought:
+  name: Clear bought list
+  description: Clears all items marked as bought from the selected list
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store being shopped at.
+      required: true
+      example: "Costco"
+      selector:
+        text:
+
+toggle_bought: 
+  name: Toggle bought
+  description: toggles if an item is marked as bought
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store being shopped at.
+      required: true
+      example: "Costco"
+      selector:
+        text:
+    uid:
+      name: ID Number
+      description: system generated id number for that item place
+      required: true
+      selector:
+        text:
