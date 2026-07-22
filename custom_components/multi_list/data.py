@@ -45,47 +45,79 @@ def removeStore(storeName):
     save_data()
 
 
-def get_stores():
-     
-    pass
+def get_stores(): #this def can maybe change entierly to just a gui menu showing buttons for each stores. if no stores exist then it will just be a blank page
+    return list(storeList.keys())
 
 ####### LIST FUNCTIONS ############
 
-def editList():
-      
-    pass
 
-def addItem():
-      
-    pass
+def addItem(storeName, itemName, quantity=1, notes=""):
+    if storeName == "":
+        raise ValueError("Store name cannot be blank")
 
-def remItem():
-     
-    pass
-
-def seeList():
-     
-    pass
-
-def clearList():
-     
-    pass
-
-def remBought():
-     
-    pass
-
-
-###### Menu Functions
-
-def mainMenu():
+    if storeName not in storeList:
+        raise ValueError("Store does not exist")
     
-    pass
+    if itemName == "":
+        raise ValueError("Item Name cannot be blank")
+    
+    if quantity <=0:
+        raise ValueError("quantity cannot be less than 1")
+        
+    new_Item = {
+         "uid": str(uuid.uuid4()),
+         "name": itemName,
+         "qty": quantity,
+         "notes": notes,
+         "bought": False
+    }
 
-def shoppingMode():
-     
-    pass
+    storeList[storeName].append(new_Item)
+    save_data()
 
-def listMenu():
-     
-    pass
+
+def remItem(storeName, uid):
+    if storeName == "":
+        raise ValueError("Store name cannot be blank")
+
+    if storeName not in storeList:
+        raise ValueError("Store does not exist")
+    
+    if not any(item["uid"] == uid for item in storeList[storeName]):
+        raise ValueError("Item not found")
+    
+    storeList[storeName] = [item for item in storeList[storeName] if item["uid"] != uid]
+    save_data()
+
+def seeList(storeName):
+    if storeName not in storeList:
+        raise ValueError("Store does not exist")
+    return storeList[storeName]
+
+
+def clearFullList(storeName):
+    if storeName not in storeList:
+        raise ValueError("Store does not exist")
+    
+    storeList[storeName] = []
+    save_data()
+
+def clearBought(storeName):
+    if storeName not in storeList:
+        raise ValueError("Store does not exist")
+
+    storeList[storeName] = [item for item in storeList[storeName] if not item["bought"]]
+    save_data()
+
+
+def toggleBought(storeName, uid):
+    if storeName not in storeList:
+        raise ValueError("Store does not exist")
+
+    for item in storeList[storeName]:
+        if item["uid"] == uid:
+            item["bought"] = not item["bought"]
+            save_data()
+            return
+
+    raise ValueError("Item not found")
