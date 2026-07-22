@@ -1,0 +1,52 @@
+create_store:
+  name: Create Store
+  description: Create a new store and its shopping list.
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store to create.
+      required: true
+      example: "Costco"
+      selector:
+        text:
+
+remove_store:
+  name: Remove Store
+  description: Removes a store from the sore list.
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store to remove.
+      required: true
+      example: "Costco"
+      selector:
+        text:
+
+toggle_bought:
+  name: Toggle bought
+  description: Toggles the bought field when an item is marked as bought
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store being shopped at.
+      required: true
+      example: "Costco"
+      selector:
+        text:
+    uid:
+      name: ID Number
+      description: system generated id number for that item place
+      required: true
+      selector:
+        text:
+
+
+
+
+add_item:
+
+remove_item:
+
+clear_full_list:
+
+clear_bought:
