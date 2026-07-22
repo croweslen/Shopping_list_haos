@@ -1,7 +1,7 @@
 import json
 import uuid
 
-DATA_FILE = "shopping_data.json"
+DATA_FILE = "/config/custom_components/multi_list/shopping_data.json"
 storeList = {}
 
 ########## SAVE DATA STUFF ###################
