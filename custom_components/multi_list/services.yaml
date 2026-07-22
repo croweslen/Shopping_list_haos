@@ -37,13 +37,13 @@ add_item:
     item_name:
       name: Item Name
       description: The name of the item being added to the stores list
-      required: True 
+      required: true 
       selector: 
         text:
     quantity:
       name: quantity
       description: The amount of items being added. Default is 1.
-      required: False
+      required: false
       selector:
         number:
         min: 1
@@ -51,7 +51,7 @@ add_item:
     notes:
       name: notes
       description: Any notes about the given item
-      required: False
+      required: false
       selector:
         text:
          
