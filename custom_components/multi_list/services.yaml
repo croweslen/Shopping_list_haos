@@ -45,9 +45,9 @@ add_item:
       description: The amount of items being added. Default is 1.
       required: false
       selector:
-        text:
-        min: 1
-        mode: box
+        number:
+          min: 1
+          mode: box
     notes:
       name: notes
       description: Any notes about the given item
