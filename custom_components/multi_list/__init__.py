@@ -8,13 +8,10 @@ from .data import clearFullList
 from .data import toggleBought
 from .data import clearBought
 
+from homeassistant.components import websocket_api
+from .data import get_stores
+
 _LOGGER = logging.getLogger(__name__)
- # 
- 
- # handle_clear_full_list, 
- # handle_clear_bought, 
- # handle_toggle_bought
- #
 
 async def async_setup(hass, config):
     _LOGGER.info("Multi-list shopping integration is loading!")
@@ -61,3 +58,12 @@ async def handle_toggle_bought(call):
     store_name = call.data["store_name"]
     uid = call.data["uid"]
     toggleBought(store_name, uid)
+
+@websocket_api.websocket_command({"type": "multi_list/get_stores"})
+@websocket_api.async_response
+
+async def handle_ws_get_stores(hass, connection, msg):
+    stores = get_stores()
+    connection.send_result(msg["id"], {"stores": stores})
+
+websocket_api.async_register_command(hass, handle_ws_get_stores)
