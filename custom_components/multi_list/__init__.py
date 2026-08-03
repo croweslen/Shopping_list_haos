@@ -24,6 +24,8 @@ async def async_setup(hass, config):
     hass.services.async_register("multi_list", "clear_bought", handle_clear_bought)
     hass.services.async_register("multi_list", "toggle_bought", handle_toggle_bought)
 
+    websocket_api.async_register_command(hass, handle_ws_get_stores)
+    
     return True
 
 async def handle_create_store(call):
@@ -66,4 +68,3 @@ async def handle_ws_get_stores(hass, connection, msg):
     stores = get_stores()
     connection.send_result(msg["id"], {"stores": stores})
 
-websocket_api.async_register_command(hass, handle_ws_get_stores)
