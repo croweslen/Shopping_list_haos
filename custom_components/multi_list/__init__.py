@@ -10,6 +10,7 @@ from .data import clearBought
 
 from homeassistant.components import websocket_api
 from .data import get_stores
+from .data import seeList
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,8 +25,10 @@ async def async_setup(hass, config):
     hass.services.async_register("multi_list", "clear_bought", handle_clear_bought)
     hass.services.async_register("multi_list", "toggle_bought", handle_toggle_bought)
 
+
     websocket_api.async_register_command(hass, handle_ws_get_stores)
-    
+    websocket_api.async_register_command(hass, handle_ws_get_items)
+
     return True
 
 async def handle_create_store(call):
@@ -68,3 +71,13 @@ async def handle_ws_get_stores(hass, connection, msg):
     stores = get_stores()
     connection.send_result(msg["id"], {"stores": stores})
 
+@websocket_api.websocket_command({
+    "type": "multi_list/get_items",
+    "store_name": str,
+})
+@websocket_api.async_response
+
+async def handle_ws_get_items(hass, connection, msg):
+    store_name = msg["store_name"]
+    items = seeList(store_name)
+    connection.send_result(msg["id"], {"items":  items})
