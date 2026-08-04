@@ -13,6 +13,7 @@ class MultiListPanel extends LitElement {
       color: var(--primary-text-color, #fff);
       min-height: 100vh;
       box-sizing: border-box;
+      align-items: center;
     }
 
     .menu{
@@ -35,11 +36,21 @@ class MultiListPanel extends LitElement {
       font-size: 18px;
       color: var(--primary-text-color, #fff);
     }
+    
+    .menu-card:hover {
+      background: var(--secondary-background-color, #3a3a3a);
+  }
   `;
 
-  render() {
-    return html`<h1>Hello Multi List</h1>`;
+render() {
+  return html`
+    <button class="menu-card" @click=${() => this._navigate("shopping")}>
+      <ha-icon icon="mdi:cart"></ha-icon>
+      Shopping Mode
+    </button>
+  `;
   }
 }
+
 
 customElements.define("multi-list-panel", MultiListPanel);
