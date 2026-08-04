@@ -9,7 +9,7 @@ from .data import toggleBought
 from .data import clearBought
 
 from homeassistant.components import websocket_api
-from homeassistant.components import panal_custom
+from homeassistant.components import panel_custom
 
 from .data import get_stores
 from .data import seeList
