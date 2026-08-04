@@ -35,6 +35,8 @@ class MultiListPanel extends LitElement {
       text-align: left;
       font-size: 18px;
       color: var(--primary-text-color, #fff);
+      justify-content: center;
+      text-align: center;
     }
     
     .menu-card:hover {
