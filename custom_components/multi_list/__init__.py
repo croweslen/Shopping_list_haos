@@ -9,6 +9,8 @@ from .data import toggleBought
 from .data import clearBought
 
 from homeassistant.components import websocket_api
+from homeassistant.components import panal_custom
+
 from .data import get_stores
 from .data import seeList
 
@@ -24,6 +26,17 @@ async def async_setup(hass, config):
     hass.services.async_register("multi_list", "clear_full_list", handle_clear_full_list)
     hass.services.async_register("multi_list", "clear_bought", handle_clear_bought)
     hass.services.async_register("multi_list", "toggle_bought", handle_toggle_bought)
+
+    await panel_custom.async_register_panel(
+    hass,
+        webcomponent_name="multi-list-panel",
+        frontend_url_path="multi-list",
+        sidebar_title="Multi List",
+        sidebar_icon="mdi:list-box-outline",
+        module_url="/local/multi-list-panel.js",
+        embed_iframe=False,
+        require_admin=False,
+    )
 
 
     websocket_api.async_register_command(hass, handle_ws_get_stores)

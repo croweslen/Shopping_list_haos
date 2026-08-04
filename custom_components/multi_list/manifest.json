@@ -3,5 +3,6 @@
     "name": "Multi-Store Shopping List",
     "version": "0.1.0",
     "codeowners": ["@croweslen"],
-    "documentation": "https://github.com/croweslen/Shopping_list_haos"
+    "documentation": "https://github.com/croweslen/Shopping_list_haos",
+    "dependencies": ["frontend", "panel_custom"]
 }
