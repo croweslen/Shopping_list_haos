@@ -62,6 +62,10 @@ render() {
       <ha-icon icon="mdi:format-list-checks"></ha-icon>
       List Manager
     </button>
+    <button class="menu-card" @click=${() => this._navigate("settings")}>
+      <ha-icon icon="mdi:cog-outline"></ha-icon>
+      Settings
+    </button>
   </div>
   `;
   }
