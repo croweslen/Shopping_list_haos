@@ -134,22 +134,26 @@ _renderListManager(){
 
 }// last bracker list manager
 
-_renderStoreManager(){
+_renderStoreManager() {
   return html`
     <h1>Store Manager</h1>
     <div class="menu">
-          ${this._stores.map(
-            (store) => html`
-            <button class="menu-card">
-              <ha-icon icon="mdi:store"></ha-icon>
-              ${store}
-            </button>
-            
-            `//end html
-          )}
+      ${this._stores.map(
+        (store) => html`
+          <button class="menu-card">
+            <ha-icon icon="mdi:store"></ha-icon>
+            ${store}
+          </button>
+        `
+      )}
+      <button class="menu-card" @click=${() => this._addStore()}>
+        <ha-icon icon="mdi:plus"></ha-icon>
+        Add Store
+      </button>
+    </div>
     ${this._renderBackButton()}
-  `;//end html
-}//last bracket store manager
+  `;
+}
 
 _renderSetting(){
   return html`
@@ -170,6 +174,21 @@ _renderBackButton() {
 
 firstUpdated(){
   this._loadStores();
+}
+
+async _addStore() {
+  const new_store = prompt("Store name:");
+  if (!new_store) {
+    return;
+  }
+
+  try {
+    await this.hass.callService("multi_list", "create_store", { store_name: new_store });
+    alert(`${new_store} was added!`);
+    this._loadStores();
+  } catch (error) {
+    alert(`Could not add store: ${error.message}`);
+  }
 }
 
 } //last bracket for class
