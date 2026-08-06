@@ -47,6 +47,8 @@ class MultiListPanel extends LitElement {
 
 render() {
   return html`
+  <h1> Multi-List </h1>
+  <h4> v.01 </h4>
   <div class="menu">
     <button class="menu-card" @click=${() => this._navigate("shopping")}>
       <ha-icon icon="mdi:cart"></ha-icon>
