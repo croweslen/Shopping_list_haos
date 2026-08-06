@@ -121,6 +121,15 @@ _renderSetting(){
   `;//end html
 }//last bracket settings
 
+_renderBackButton() {
+  return html`
+    <button class="menu-card" @click=${() => this._navigate("menu")}>
+      <ha-icon icon="mdi:arrow-left"></ha-icon>
+      Back to Menu
+    </button>
+  `;
+}
+
 } //last bracket for class
 
 
