@@ -55,6 +55,7 @@ render() {
       <ha-icon icon="mdi:cart"></ha-icon>
       Store Manager
     </button>
+    <br>
     <button class="menu-card" @click=${() => this._navigate("listManager")}>
       <ha-icon icon="mdi:cart"></ha-icon>
       List Manager
