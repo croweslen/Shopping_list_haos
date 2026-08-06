@@ -7,6 +7,8 @@ from .data import addItem
 from .data import clearFullList
 from .data import toggleBought
 from .data import clearBought
+from .data import async_load_data
+from .data import async_save_data
 
 from homeassistant.components import websocket_api
 from homeassistant.components import panel_custom
@@ -18,6 +20,8 @@ _LOGGER = logging.getLogger(__name__)
 
 async def async_setup(hass, config):
     _LOGGER.info("Multi-list shopping integration is loading!")
+
+    await async_load_data(hass)
 
     hass.services.async_register("multi_list", "create_store", handle_create_store)
     hass.services.async_register("multi_list", "remove_store", handle_remove_store)
