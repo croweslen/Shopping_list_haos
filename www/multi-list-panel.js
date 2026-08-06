@@ -55,11 +55,11 @@ render() {
       Shopping Mode
     </button>
     <button class="menu-card" @click=${() => this._navigate("storeManager")}>
-      <ha-icon icon="mdi:cart"></ha-icon>
+      <ha-icon icon="mdi:store-outline"></ha-icon>
       Store Manager
     </button>
     <button class="menu-card" @click=${() => this._navigate("listManager")}>
-      <ha-icon icon="mdi:cart"></ha-icon>
+      <ha-icon icon="mdi:format-list-checks"></ha-icon>
       List Manager
     </button>
   </div>
