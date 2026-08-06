@@ -50,12 +50,20 @@ class MultiListPanel extends LitElement {
       background: var(--secondary-background-color, #3a3a3a);
   }
   `;
-
+// shopping, storeManager, listManager, settings
 render() {
    if (this._currentView === "menu") {
-    return this._renderMenu();
+      return this._renderMenu();
+  }   else if (this._currentView === "shopping")  {
+      return this._renderShoppingMode();
+  }   else if (this._currentView === "storeManager")  {
+      return this._renderStoreManager();
+  }   else if(this._currentView ==="listManager")  {
+      return this._renderListManager();
+  }   else if (this._currentView ==="settings") {
+      return this._renderSetting();
   }
-  return html`<p>Unknown view</p>`;
+    return html`<p>Unknown view</p>`;
   }
 
 _navigate(screen) {
