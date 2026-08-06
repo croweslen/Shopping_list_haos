@@ -4,12 +4,25 @@ class MultiListPanel extends LitElement {
   static properties = {
     hass: { type: Object },
     _currentView: { state: true },
+    _stores: { state: true }, 
   };
 
   constructor() {
     super();
     this._currentView = "menu";
+    this._stores = [];
   }
+
+  async _loadStores()   {
+    const result = await this.hass.connection.sendMessagePromise({
+      type: "multi_list/get_stores",
+    });
+    this._stores = result.stores;
+
+  }
+
+
+
 
   static styles = css`
     :host {
@@ -50,6 +63,12 @@ class MultiListPanel extends LitElement {
       background: var(--secondary-background-color, #3a3a3a);
   }
   `;
+
+
+
+
+
+
 // shopping, storeManager, listManager, settings
 render() {
    if (this._currentView === "menu") {
@@ -117,6 +136,16 @@ _renderListManager(){
 _renderStoreManager(){
   return html`
     <h1>Store Manager</h1>
+    <div class="menu">
+          ${this._stores.map(
+            (store) => html`
+            <button class="menu-card">
+              <ha-icon icon="mdi:store"></ha-icon>
+              ${store}
+            </button>
+            
+            `//end html
+          )}
     ${this._renderBackButton()}
   `;//end html
 }//last bracket store manager
@@ -136,6 +165,10 @@ _renderBackButton() {
       Back to Menu
     </button>
   `;
+}
+
+firstUpdated(){
+  this._loadStores();
 }
 
 } //last bracket for class
