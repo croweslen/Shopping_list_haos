@@ -17,6 +17,7 @@ class MultiListPanel extends LitElement {
     const result = await this.hass.connection.sendMessagePromise({
       type: "multi_list/get_stores",
     });
+    console.log("loaded stores:", result);
     this._stores = result.stores;
 
   }
