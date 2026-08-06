@@ -5,12 +5,16 @@ class MultiListPanel extends LitElement {
     hass: { type: Object },
     _currentView: { state: true },
     _stores: { state: true }, 
+    _selectedStore: { state: true },
+    _showStoreModal: { state:true },
   };
 
   constructor() {
     super();
     this._currentView = "menu";
     this._stores = [];
+    this._selectedStore = null;
+    this._showStoreModal = false;
   }
 
   async _loadStores()   {
@@ -62,8 +66,38 @@ class MultiListPanel extends LitElement {
     
     .menu-card:hover {
       background: var(--secondary-background-color, #3a3a3a);
-  }
-  `;
+}
+
+  .modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-box {
+  background: var(--card-background-color, #2c2c2c);
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modal-box h2 {
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+`;
 
 
 
@@ -72,19 +106,19 @@ class MultiListPanel extends LitElement {
 
 // shopping, storeManager, listManager, settings
 render() {
-   if (this._currentView === "menu") {
-      return this._renderMenu();
-  }   else if (this._currentView === "shopping")  {
-      return this._renderShoppingMode();
-  }   else if (this._currentView === "storeManager")  {
-      return this._renderStoreManager();
-  }   else if(this._currentView ==="listManager")  {
-      return this._renderListManager();
-  }   else if (this._currentView ==="settings") {
-      return this._renderSetting();
+  if (this._currentView === "menu") {
+    return html`${this._renderMenu()} ${this._renderStoreModal()}`;
+  } else if (this._currentView === "shopping") {
+    return html`${this._renderShoppingMode()} ${this._renderStoreModal()}`;
+  } else if (this._currentView === "storeManager") {
+    return html`${this._renderStoreManager()} ${this._renderStoreModal()}`;
+  } else if (this._currentView === "listManager") {
+    return html`${this._renderListManager()} ${this._renderStoreModal()}`;
+  } else if (this._currentView === "settings") {
+    return html`${this._renderSetting()} ${this._renderStoreModal()}`;
   }
-    return html`<p>Unknown view</p>`;
-  }
+  return html`<p>Unknown view</p>`;
+}
 
 _navigate(screen) {
   this._currentView = screen;
@@ -140,7 +174,7 @@ _renderStoreManager() {
     <div class="menu">
       ${this._stores.map(
         (store) => html`
-          <button class="menu-card">
+          <button class="menu-card" @click=${() => this._openStoreModal(store)}>
             <ha-icon icon="mdi:store"></ha-icon>
             ${store}
           </button>
@@ -192,6 +226,34 @@ async _addStore() {
   }
 }
 
+_openStoreModal(store) {
+  this._selectedStore = store;
+  this._showStoreModal = true;
+}
+
+_renderStoreModal() {
+  if (!this._showStoreModal) {
+    return html``;
+  }
+  return html`
+    <div class="modal-overlay" @click=${() => this._closeStoreModal()}>
+      <div class="modal-box" @click=${(e) => e.stopPropagation()}>
+        <h2>${this._selectedStore}</h2>
+        <button class="menu-card">View List</button>
+        <button class="menu-card">Rename</button>
+        <button class="menu-card">Clear Bought</button>
+        <button class="menu-card">Clear Full List</button>
+        <button class="menu-card">Delete</button>
+        <button class="menu-card" @click=${() => this._closeStoreModal()}>Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
+_closeStoreModal() {
+  this._showStoreModal = false;
+  this._selectedStore = null;
+}
 } //last bracket for class
 
 
