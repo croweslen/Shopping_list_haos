@@ -3,7 +3,13 @@ import { LitElement, html, css } from "https://unpkg.com/lit@2.7.0/index.js?modu
 class MultiListPanel extends LitElement {
   static properties = {
     hass: { type: Object },
+    _currentView: { state: true },
   };
+
+  constructor() {
+    super();
+    this._currentView = "menu";
+  }
 
   static styles = css`
     :host {
@@ -46,6 +52,18 @@ class MultiListPanel extends LitElement {
   `;
 
 render() {
+   if (this._currentView === "menu") {
+    return this._renderMenu();
+  }
+  return html`<p>Unknown view</p>`;
+  }
+
+_navigate(screen) {
+  this._currentView = screen;
+}
+
+
+_renderMenu(){
   return html`
   <h1> Multi-List </h1>
   <h4> v.01 </h4>
@@ -68,7 +86,8 @@ render() {
     </button>
   </div>
   `;
-  }
+
+}
 }
 
 
