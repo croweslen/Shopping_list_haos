@@ -150,8 +150,9 @@ _renderStoreManager() {
         <ha-icon icon="mdi:plus"></ha-icon>
         Add Store
       </button>
+       ${this._renderBackButton()}
     </div>
-    ${this._renderBackButton()}
+   
   `;
 }
 
