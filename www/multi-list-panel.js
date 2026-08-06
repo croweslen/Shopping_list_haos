@@ -7,13 +7,14 @@ class MultiListPanel extends LitElement {
 
   static styles = css`
     :host {
-      display: block;
+      display: flex;
       padding: 24px;
       background: var(--primary-background-color, #1c1c1c);
       color: var(--primary-text-color, #fff);
       min-height: 100vh;
       box-sizing: border-box;
       align-items: center;
+      flex-direction: column;
     }
 
     .menu{
