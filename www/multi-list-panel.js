@@ -87,8 +87,41 @@ _renderMenu(){
   </div>
   `;
 
-}
-}
+}// renderMenu end bracket
+
+
+_renderShoppingMode() {
+  return html`
+    <h1>Shopping Mode</h1>
+    ${this._renderBackButton()}
+  `;// end html
+} // shopping mode placeholder
+
+_renderListManager(){
+  return html`
+    <h1>List Manager</h1>
+    ${this._renderBackButton()}
+
+  `;// end html
+
+}// last bracker list manager
+
+_renderStoreManager(){
+  return html`
+    <h1>Store Manager</h1>
+    ${this._renderBackButton()}
+  `;//end html
+}//last bracket store manager
+
+_renderSetting(){
+  return html`
+    <h1>Settings menu</h1>
+    <p> Eventually adding custom colors, background, store icons, any other settings</p>
+    ${this._renderBackButton()}
+  `;//end html
+}//last bracket settings
+
+} //last bracket for class
 
 
 customElements.define("multi-list-panel", MultiListPanel);
