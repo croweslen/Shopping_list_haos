@@ -20,7 +20,7 @@ class MultiListPanel extends LitElement {
     .menu{
       display: flex;
       flex-direction: column;
-      gap: 50px;
+      gap: 24px;
       max-width: 480px;
 
     }
