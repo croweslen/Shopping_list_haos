@@ -242,7 +242,7 @@ _renderStoreModal() {
         <button class="menu-card">View List</button>
         <button class="menu-card">Clear Bought</button>
         <button class="menu-card">Clear Full List</button>
-        <button class="menu-card">Delete</button>
+        <button class="menu-card" @click=${() => this._deleteStore()}>Delete</button>
         <button class="menu-card" @click=${() => this._closeStoreModal()}>Cancel</button>
       </div>
     </div>
