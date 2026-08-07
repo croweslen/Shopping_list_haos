@@ -240,7 +240,6 @@ _renderStoreModal() {
       <div class="modal-box" @click=${(e) => e.stopPropagation()}>
         <h2>${this._selectedStore}</h2>
         <button class="menu-card">View List</button>
-        <button class="menu-card">Rename</button>
         <button class="menu-card">Clear Bought</button>
         <button class="menu-card">Clear Full List</button>
         <button class="menu-card">Delete</button>
@@ -254,7 +253,45 @@ _closeStoreModal() {
   this._showStoreModal = false;
   this._selectedStore = null;
 }
+
+
+async _deleteStore() {
+  const confirmed = confirm(`Are you sure you want to delete ${this._selectedStore}? This cannot be undone`)
+  
+  if (!confirmed){
+    return;
+  }
+
+  try {
+    await this.hass.callService("multi_list", "remove_store", { store_name: this._selectedStore});
+    this._closeStoreModal();
+    this._loadStores();
+  } catch (error) {
+    alert(`Could not delete selected store: ${error.message}`)
+  }
+}
+
+async _clearBought(){
+
+}
+
+async _clearList(){
+
+}
+
+async _viewList(){
+
+}
+
+  
+}
+
+
+
+
+//NO MORE CODE UNDER HERE //////////////////////////////////////////////////////////////// 
 } //last bracket for class
+
 
 
 customElements.define("multi-list-panel", MultiListPanel);
