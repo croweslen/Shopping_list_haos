@@ -162,6 +162,20 @@ _renderShoppingMode() {
 _renderListManager(){
   return html`
     <h1>List Manager</h1>
+    <div class="menu">
+      ${this._stores.map(
+        (store) => html`
+          <button class="menu-card" @click=${() => this._openStoreModal(store)}>
+            <ha-icon icon="mdi:store"></ha-icon>
+            ${store}
+          </button>
+        `
+      )}
+
+       ${this._renderBackButton()}
+    </div>
+   
+  `;
     ${this._renderBackButton()}
 
   `;// end html
