@@ -11,6 +11,7 @@ class MultiListPanel extends LitElement {
     _newItemName: { state: true },
     _newItemQty: { state: true },
     _newItemNotes: { state: true },
+    _selectedListStore: { state: true },
   };
 
   constructor() {
@@ -19,6 +20,11 @@ class MultiListPanel extends LitElement {
     this._stores = [];
     this._selectedStore = null;
     this._showStoreModal = false;
+    this._listItems = [];
+    this._newItemName = "";
+    this._newItemQty = "";
+    this._newItemNotes = "";
+    this._selectedListStore = "";
   }
 
   async _loadStores()   {
@@ -103,7 +109,7 @@ class MultiListPanel extends LitElement {
 
 `;
 
-// shopping, storeManager, listManager, settings
+// shopping, storeManager, items, settings
 render() {
   if (this._currentView === "menu") {
     return html`${this._renderMenu()} ${this._renderStoreModal()}`;
@@ -111,6 +117,8 @@ render() {
     return html`${this._renderShoppingMode()} ${this._renderStoreModal()}`;
   } else if (this._currentView === "storeManager") {
     return html`${this._renderStoreManager()} ${this._renderStoreModal()}`;
+  } else if (this._currentView === "items") {
+    return html`${this._renderItemsScreen()} ${this._renderStoreModal()}`;
   } else if (this._currentView === "settings") {
     return html`${this._renderSetting()} ${this._renderStoreModal()}`;
   }
@@ -135,7 +143,7 @@ _renderMenu(){
       <ha-icon icon="mdi:store-outline"></ha-icon>
       Store Manager
     </button>
-    <button class="menu-card" @click=${() => this._navigate("listManager")}>
+    <button class="menu-card" @click=${() => this._navigate("items")}>
       <ha-icon icon="mdi:list-box-outline"></ha-icon>
       List Manager
     </button>
@@ -227,7 +235,7 @@ _renderStoreModal() {
     <div class="modal-overlay" @click=${() => this._closeStoreModal()}>
       <div class="modal-box" @click=${(e) => e.stopPropagation()}>
         <h2>${this._selectedStore}</h2>
-        <button class="menu-card">View List</button>
+        <button class="menu-card" @click=${() => this._goToItemsScreen()}>View List</button>
         <button class="menu-card">Clear Bought</button>
         <button class="menu-card">Clear Full List</button>
         <button class="menu-card" @click=${() => this._deleteStore()}>Delete</button>
@@ -240,6 +248,13 @@ _renderStoreModal() {
 _closeStoreModal() {
   this._showStoreModal = false;
   this._selectedStore = null;
+}
+
+_goToItemsScreen() {
+  this._selectedListStore = this._selectedStore;
+  this._closeStoreModal();
+  this._navigate("items");
+  this._loadListItems();
 }
 
 
@@ -267,26 +282,38 @@ async _clearList(){
 
 }
 
-async _viewList(){
-
+_selectListStore(storeName) {
+  this._selectedListStore = storeName;
+  this._loadListItems();
 }
 
-_renderlistManager(){
+async _loadListItems() {
+  if (!this._selectedListStore) {
+    this._listItems = [];
+    return;
+  }
+  const result = await this.hass.connection.sendMessagePromise({
+    type: "multi_list/get_items",
+    store_name: this._selectedListStore,
+  });
+  this._listItems = result.items;
+}
+
+_renderItemsScreen(){
   return html`
-  <h1>List Manager>
-  
-  <select @change=${(e) => this._selectListStore(e.target.value)}>
-  <option value="">-- Select a store --</option>
-  ${this._stores.map(
-    (store) => html`
-      <option value=${store} ?selected=${store === this._selectedListStore}>
-        ${store}
-      </option>
-    `
-  )}
-</select>
-  
-  `//end html
+    <h1>List Manager</h1>
+    <select @change=${(e) => this._selectListStore(e.target.value)}>
+      <option value="">-- Select a store --</option>
+      ${this._stores.map(
+        (store) => html`
+          <option value=${store} ?selected=${store === this._selectedListStore}>
+            ${store}
+          </option>
+        `
+      )}
+    </select>
+    ${this._renderBackButton()}
+  `;
 }
 
 } //last bracket for class
