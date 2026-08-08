@@ -107,6 +107,21 @@ class MultiListPanel extends LitElement {
   text-align: center;
 }
 
+.items-layout {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 800px;
+  align-items: flex-start;
+}
+
+.items-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 `;
 
 // shopping, storeManager, items, settings
@@ -299,7 +314,7 @@ async _loadListItems() {
   this._listItems = result.items;
 }
 
-_renderItemsScreen(){
+_renderItemsScreen() {
   return html`
     <h1>List Manager</h1>
     <select @change=${(e) => this._selectListStore(e.target.value)}>
@@ -312,6 +327,18 @@ _renderItemsScreen(){
         `
       )}
     </select>
+
+    <div class="items-layout">
+      <div class="items-column">
+        <h3>Add Item</h3>
+        <!-- form fields go here next -->
+      </div>
+      <div class="items-column">
+        <h3>Current Items</h3>
+        <!-- item list goes here next -->
+      </div>
+    </div>
+
     ${this._renderBackButton()}
   `;
 }
