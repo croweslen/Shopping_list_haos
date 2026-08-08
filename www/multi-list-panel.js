@@ -423,10 +423,10 @@ _renderItemsScreen() {
         ${this._listItems.map(
           (item) => html`
             <div class="menu-card">
-               ${item.name} — Qty: ${item.qty} ${item.notes ? `(${item.notes})` : ""}
+              ${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
             </div>
-           `
-            )}
+          `
+        )}
       </div>
     </div>
 
