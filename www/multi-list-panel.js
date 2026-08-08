@@ -110,9 +110,7 @@ render() {
   } else if (this._currentView === "shopping") {
     return html`${this._renderShoppingMode()} ${this._renderStoreModal()}`;
   } else if (this._currentView === "storeManager") {
-    return html`${this._renderListManager()} ${this._renderStoreModal()}`;
-  } else if (this._currentView === "listManager") {
-    return html`${this._renderListManager()} ${this._renderStoreModal()}`;
+    return html`${this._renderStoreManager()} ${this._renderStoreModal()}`;
   } else if (this._currentView === "settings") {
     return html`${this._renderSetting()} ${this._renderStoreModal()}`;
   }
@@ -141,7 +139,6 @@ _renderMenu(){
       <ha-icon icon="mdi:list-box-outline"></ha-icon>
       List Manager
     </button>
-  </div>
     <button class="menu-card" @click=${() => this._navigate("settings")}>
       <ha-icon icon="mdi:cog-outline"></ha-icon>
       Settings
