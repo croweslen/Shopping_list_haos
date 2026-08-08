@@ -7,6 +7,10 @@ class MultiListPanel extends LitElement {
     _stores: { state: true }, 
     _selectedStore: { state: true },
     _showStoreModal: { state:true },
+    _listItems: { state: true },  
+    _newItemName: { state: true },
+    _newItemQty: { state: true },
+    _newItemNotes: { state: true },
   };
 
   constructor() {
@@ -261,6 +265,24 @@ async _clearList(){
 
 async _viewList(){
 
+}
+
+async _listManager(){
+  return html`
+  <h1>List Manager>
+  
+  <select @change=${(e) => this._selectListStore(e.target.value)}>
+  <option value="">-- Select a store --</option>
+  ${this._stores.map(
+    (store) => html`
+      <option value=${store} ?selected=${store === this._selectedListStore}>
+        ${store}
+      </option>
+    `
+  )}
+</select>
+  
+  `//end html
 }
 
 } //last bracket for class
