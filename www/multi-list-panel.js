@@ -12,6 +12,7 @@ class MultiListPanel extends LitElement {
     _newItemQty: { state: true },
     _newItemNotes: { state: true },
     _selectedListStore: { state: true },
+    _showConfirmation: { state: true },
   };
 
   constructor() {
@@ -25,6 +26,7 @@ class MultiListPanel extends LitElement {
     this._newItemQty = "";
     this._newItemNotes = "";
     this._selectedListStore = "";
+    this._showConfirmation = false;
   }
 
   async _loadStores()   {
@@ -121,6 +123,25 @@ class MultiListPanel extends LitElement {
   flex-direction: column;
   gap: 12px;
 }
+
+.button-row {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+
+.confirmation-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary-color, #03a9f4);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 8px;
+  z-index: 2000;
+}
+
 
 `;
 
@@ -272,6 +293,50 @@ _goToItemsScreen() {
   this._loadListItems();
 }
 
+_clearNewItem(){
+  this._newItemName = "";
+  this._newItemQty = "";
+  this._newItemNotes = "";
+}
+
+_showAddedConfirmation() {
+  this._showConfirmation = true;
+  setTimeout(() => {
+    this._showConfirmation = false;
+  }, 1000);
+}
+
+_renderConfirmationToast() {
+  if (!this._showConfirmation) {
+    return html``;
+  }
+  return html`<div class="confirmation-toast">Item added!</div>`;
+}
+
+_selectListStore(storeName) {
+  this._selectedListStore = storeName;
+  this._loadListItems();
+}
+
+async _submitNewItem() {
+  if (!this._newItemName) {
+    return;
+  }
+
+  try {
+    await this.hass.callService("multi_list", "add_item", {
+      store_name: this._selectedListStore,
+      item_name: this._newItemName,
+      quantity: Number(this._newItemQty) || 1,
+      notes: this._newItemNotes || "",
+    });
+    this._clearNewItem();
+    this._loadListItems();
+    this._showAddedConfirmation();
+  } catch (error) {
+    alert(`Could not add item: ${error.message}`);
+  }
+}
 
 async _deleteStore() {
   const confirmed = confirm(`Are you sure you want to delete ${this._selectedStore}? This cannot be undone`);
@@ -294,13 +359,11 @@ async _clearBought(){
 }
 
 async _clearList(){
+ 
 
 }
 
-_selectListStore(storeName) {
-  this._selectedListStore = storeName;
-  this._loadListItems();
-}
+
 
 async _loadListItems() {
   if (!this._selectedListStore) {
@@ -349,13 +412,19 @@ _renderItemsScreen() {
           .value=${this._newItemNotes}
           @input=${(e) => this._newItemNotes = e.target.value}
           />
-      </div>
+          <div class="button-row">
+            <button class="menu-card" @click=${() => this._submitNewItem()}>Submit</button>
+            <button class="menu-card" @click=${() => this._clearNewItem()}>Clear</button>
+            <button class="menu-card" @click=${() => this._navigate("menu")}>Exit</button>
+          </div>
+        </div>
       <div class="items-column">
         <h3>Current Items</h3>
         <!-- item list goes here next -->
       </div>
     </div>
 
+    ${this._renderConfirmationToast()}
     ${this._renderBackButton()}
   `;
 }
