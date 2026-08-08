@@ -331,7 +331,24 @@ _renderItemsScreen() {
     <div class="items-layout">
       <div class="items-column">
         <h3>Add Item</h3>
-        <!-- form fields go here next -->
+        <input
+          type="text"
+          placeholder="Item name"
+          .value=${this._newItemName}
+          @input=${(e) => this._newItemName = e.target.value}
+          />
+        <input
+          type="number"
+          placeholder="Item Quantity"
+          .value=${this._newItemQty}
+          @input=${(e) => this._newItemQty = e.target.value}
+          />
+        <input
+          type="text"
+          placeholder="Item notes"
+          .value=${this._newItemNotes}
+          @input=${(e) => this._newItemNotes = e.target.value}
+          />
       </div>
       <div class="items-column">
         <h3>Current Items</h3>
