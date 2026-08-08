@@ -420,7 +420,13 @@ _renderItemsScreen() {
         </div>
       <div class="items-column">
         <h3>Current Items</h3>
-        <!-- item list goes here next -->
+        ${this._listItems.map(
+          (item) => html`
+            <div class="menu-card">
+               ${item.name} — Qty: ${item.qty} ${item.notes ? `(${item.notes})` : ""}
+            </div>
+           `
+            )}
       </div>
     </div>
 
