@@ -99,11 +99,6 @@ class MultiListPanel extends LitElement {
 
 `;
 
-
-
-
-
-
 // shopping, storeManager, listManager, settings
 render() {
   if (this._currentView === "menu") {
@@ -171,16 +166,10 @@ _renderListManager(){
           </button>
         `
       )}
-
        ${this._renderBackButton()}
     </div>
-   
   `;
-    ${this._renderBackButton()}
-
-  `;// end html
-
-}// last bracker list manager
+}// last bracket list manager
 
 _renderStoreManager() {
   return html`
@@ -270,7 +259,7 @@ _closeStoreModal() {
 
 
 async _deleteStore() {
-  const confirmed = confirm(`Are you sure you want to delete ${this._selectedStore}? This cannot be undone`)
+  const confirmed = confirm(`Are you sure you want to delete ${this._selectedStore}? This cannot be undone`);
   
   if (!confirmed){
     return;
@@ -281,7 +270,7 @@ async _deleteStore() {
     this._closeStoreModal();
     this._loadStores();
   } catch (error) {
-    alert(`Could not delete selected store: ${error.message}`)
+    alert(`Could not delete selected store: ${error.message}`);
   }
 }
 
@@ -297,15 +286,6 @@ async _viewList(){
 
 }
 
-
-
-
-
-
-
-//NO MORE CODE UNDER HERE //////////////////////////////////////////////////////////////// 
 } //last bracket for class
-
-
 
 customElements.define("multi-list-panel", MultiListPanel);
