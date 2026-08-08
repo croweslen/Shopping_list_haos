@@ -13,6 +13,8 @@ class MultiListPanel extends LitElement {
     _newItemNotes: { state: true },
     _selectedListStore: { state: true },
     _showConfirmation: { state: true },
+    _selectedItem: { state: true },
+    _showItemModal: { state: true },
   };
 
   constructor() {
@@ -27,6 +29,8 @@ class MultiListPanel extends LitElement {
     this._newItemNotes = "";
     this._selectedListStore = "";
     this._showConfirmation = false;
+    this._selectedItem = null;
+    this._showItemModal = false;
   }
 
   async _loadStores()   {
@@ -154,7 +158,7 @@ render() {
   } else if (this._currentView === "storeManager") {
     return html`${this._renderStoreManager()} ${this._renderStoreModal()}`;
   } else if (this._currentView === "items") {
-    return html`${this._renderItemsScreen()} ${this._renderStoreModal()}`;
+    return html`${this._renderItemsScreen()} ${this._renderStoreModal()} ${this._renderItemModal()}`;
   } else if (this._currentView === "settings") {
     return html`${this._renderSetting()} ${this._renderStoreModal()}`;
   }
@@ -377,6 +381,11 @@ async _loadListItems() {
   this._listItems = result.items;
 }
 
+_openItemModal(item) {
+  this._selectedItem = item;
+  this._showItemModal = true;
+}
+
 _renderItemsScreen() {
   return html`
     <h1>List Manager</h1>
@@ -422,7 +431,7 @@ _renderItemsScreen() {
         <h3>Current Items</h3>
         ${this._listItems.map(
           (item) => html`
-            <div class="menu-card">
+            <div class="menu-card" @click=${() => this._openItemModal(item)}>
               ${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
             </div>
           `
@@ -433,6 +442,42 @@ _renderItemsScreen() {
     ${this._renderConfirmationToast()}
     ${this._renderBackButton()}
   `;
+}
+
+_renderItemModal() {
+  if (!this._showItemModal || !this._selectedItem) {
+    return html``;
+  }
+  return html`
+    <div class="modal-overlay" @click=${() => this._closeItemModal()}>
+      <div class="modal-box" @click=${(e) => e.stopPropagation()}>
+        <h2>Edit Item</h2>
+        <input
+          type="text"
+          .value=${this._selectedItem.name}
+          @input=${(e) => this._selectedItem = { ...this._selectedItem, name: e.target.value }}
+        />
+        <input
+          type="number"
+          .value=${this._selectedItem.qty}
+          @input=${(e) => this._selectedItem = { ...this._selectedItem, qty: e.target.value }}
+        />
+        <input
+          type="text"
+          .value=${this._selectedItem.notes}
+          @input=${(e) => this._selectedItem = { ...this._selectedItem, notes: e.target.value }}
+        />
+        <button class="menu-card" @click=${() => this._saveItemEdit()}>Save</button>
+        <button class="menu-card" @click=${() => this._deleteItem()}>Delete</button>
+        <button class="menu-card" @click=${() => this._closeItemModal()}>Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
+_closeItemModal() {
+  this._showItemModal = false;
+  this._selectedItem = null;
 }
 
 } //last bracket for class
