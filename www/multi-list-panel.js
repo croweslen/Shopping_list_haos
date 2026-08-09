@@ -493,6 +493,22 @@ async _deleteItem() {
   }
 }
 
+async _saveItemEdit() {
+  try {
+    await this.hass.callService("multi_list", "edit_item", {
+      store_name: this._selectedListStore,
+      uid: this._selectedItem.uid,
+      item_name: this._selectedItem.name,
+      quantity: Number(this._selectedItem.qty) || 1,
+      notes: this._selectedItem.notes || "",
+    });
+    this._closeItemModal();
+    this._loadListItems();
+  } catch (error) {
+    alert(`Could not save item: ${error.message}`);
+  }
+}
+
 } //last bracket for class
 
 customElements.define("multi-list-panel", MultiListPanel);
