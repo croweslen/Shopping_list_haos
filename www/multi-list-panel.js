@@ -480,6 +480,19 @@ _closeItemModal() {
   this._selectedItem = null;
 }
 
+async _deleteItem() {
+  try {
+    await this.hass.callService("multi_list", "remove_item", {
+      store_name: this._selectedListStore,
+      uid: this._selectedItem.uid,
+    });
+    this._closeItemModal();
+    this._loadListItems();
+  } catch (error) {
+    alert(`Could not delete item: ${error.message}`);
+  }
+}
+
 } //last bracket for class
 
 customElements.define("multi-list-panel", MultiListPanel);

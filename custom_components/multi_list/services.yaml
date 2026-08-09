@@ -114,3 +114,41 @@ toggle_bought:
       required: true
       selector:
         text:
+
+edit_item:
+  name: Edit Item
+  description: Edits an existing item in a list
+  fields:
+    store_name:
+      name: Store Name
+      description: The name of the store being shopped at.
+      required: true
+      example: "Costco"
+      selector:
+        text:
+    uid:
+      name: ID Number
+      description: system generated id number for that item
+      required: true
+      selector:
+        text:
+    item_name:
+      name: Item Name
+      description: The name of the item being added to the stores list
+      required: true 
+      selector: 
+        text:
+    quantity:
+      name: quantity
+      description: The amount of items being added. Default is 1.
+      required: false
+      selector:
+        number:
+          min: 1
+          mode: box
+    notes:
+      name: notes
+      description: Any notes about the given item
+      required: false
+      selector:
+        text:

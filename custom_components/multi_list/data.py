@@ -121,3 +121,17 @@ def toggleBought(storeName, uid):
             return
 
     raise ValueError("Item not found")
+
+def editItem(storeName, itemName, quantity, notes, uid):
+    if storeName not in storeList:
+            raise ValueError("Store does not exist")
+    
+    for item in storeList[storeName]:
+        if item["uid"] == uid:
+            item["name"] = itemName
+            item["qty"] = quantity
+            item["notes"] = notes
+            save_data()
+            return
+    
+        raise ValueError("Item not found")
