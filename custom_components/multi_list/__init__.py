@@ -9,6 +9,7 @@ from .data import toggleBought
 from .data import clearBought
 from .data import async_load_data
 from .data import async_save_data
+from .data import editItem
 
 from homeassistant.components import websocket_api
 from homeassistant.components import panel_custom
@@ -30,6 +31,7 @@ async def async_setup(hass, config):
     hass.services.async_register("multi_list", "clear_full_list", handle_clear_full_list)
     hass.services.async_register("multi_list", "clear_bought", handle_clear_bought)
     hass.services.async_register("multi_list", "toggle_bought", handle_toggle_bought)
+    hass.services.async_register("multi_list", "edit_item", handle_edit_item)
 
     await panel_custom.async_register_panel(
     hass,
@@ -98,3 +100,11 @@ async def handle_ws_get_items(hass, connection, msg):
     store_name = msg["store_name"]
     items = seeList(store_name)
     connection.send_result(msg["id"], {"items":  items})
+
+async def handle_edit_item(call):
+    store_name = call.data["store_name"]
+    uid = call.data["uid"]
+    item_name = call.data["item_name"]
+    quantity = call.data.get("quantity", 1)
+    notes = call.data.get("notes", "")
+    editItem(store_name, item_name, quantity, notes, uid)
