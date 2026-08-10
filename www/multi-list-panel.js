@@ -149,18 +149,18 @@ class MultiListPanel extends LitElement {
       border-radius: 8px;
       z-index: 2000;
     }
-    
-    .bought-item{
-      color: #4caf50
+
+    .bought-item {
+      color: #4caf50;
     }
   `;
 
   // ==================== NAVIGATION ====================
   _navigate(screen) {
     this._currentView = screen;
-     if (screen === "shopping") {
+    if (screen === "shopping") {
       this._loadShoppingItems();
-  }
+    }
   }
 
   // ==================== DATA LOADING ====================
@@ -350,13 +350,27 @@ class MultiListPanel extends LitElement {
     }
   }
 
+  async _finishShopping(mode) {
+    try {
+      if (mode === "all") {
+        await this.hass.callService("multi_list", "clear_full_list", { store_name: this._shoppingStore });
+      } else {
+        await this.hass.callService("multi_list", "clear_bought", { store_name: this._shoppingStore });
+      }
+      this._showDoneModal = false;
+      this._loadShoppingItems();
+    } catch (error) {
+      alert(`Could not clear list: ${error.message}`);
+    }
+  }
+
   // ==================== MAIN RENDER (ROUTER) ====================
   // shopping, storeManager, items, settings
   render() {
     if (this._currentView === "menu") {
       return html`${this._renderMenu()} ${this._renderStoreModal()}`;
     } else if (this._currentView === "shopping") {
-      return html`${this._renderShoppingMode()} ${this._renderStoreModal()}`;
+      return html`${this._renderShoppingMode()} ${this._renderStoreModal()} ${this._renderDoneModal()}`;
     } else if (this._currentView === "storeManager") {
       return html`${this._renderStoreManager()} ${this._renderStoreModal()}`;
     } else if (this._currentView === "items") {
@@ -394,31 +408,32 @@ class MultiListPanel extends LitElement {
   }
 
   _renderShoppingMode() {
-  return html`
-    <h1>Shopping Mode</h1>
-    <select @change=${(e) => this._selectShoppingStore(e.target.value)}>
-      <option value="">-- Select a store --</option>
-      ${this._stores.map(
-        (store) => html`
-          <option value=${store} ?selected=${store === this._shoppingStore}>
-            ${store}
-          </option>
-        `
-      )}
-    </select>
+    return html`
+      <h1>Shopping Mode</h1>
+      <select @change=${(e) => this._selectShoppingStore(e.target.value)}>
+        <option value="">-- Select a store --</option>
+        ${this._stores.map(
+          (store) => html`
+            <option value=${store} ?selected=${store === this._shoppingStore}>
+              ${store}
+            </option>
+          `
+        )}
+      </select>
 
-    <div class="menu">
-      ${[...this._shoppingItems].sort((a, b) => a.bought - b.bought).map(
-        (item) => html`
-          <div class="menu-card ${item.bought ? 'bought-item' : ''}" @click=${() => this._toggleBought(item)}>
-            ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
-          </div>
-        `
-      )}
-      ${this._renderBackButton()}
-    </div>
-  `;
-}
+      <div class="menu">
+        ${[...this._shoppingItems].sort((a, b) => a.bought - b.bought).map(
+          (item) => html`
+            <div class="menu-card ${item.bought ? 'bought-item' : ''}" @click=${() => this._toggleBought(item)}>
+              ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+            </div>
+          `
+        )}
+        <button class="menu-card" @click=${() => this._showDoneModal = true}>Done Shopping</button>
+        ${this._renderBackButton()}
+      </div>
+    `;
+  }
 
   _renderStoreManager() {
     return html`
@@ -569,6 +584,22 @@ class MultiListPanel extends LitElement {
           <button class="menu-card" @click=${() => this._saveItemEdit()}>Save</button>
           <button class="menu-card" @click=${() => this._deleteItem()}>Delete</button>
           <button class="menu-card" @click=${() => this._closeItemModal()}>Cancel</button>
+        </div>
+      </div>
+    `;
+  }
+
+  _renderDoneModal() {
+    if (!this._showDoneModal) {
+      return html``;
+    }
+    return html`
+      <div class="modal-overlay" @click=${() => this._showDoneModal = false}>
+        <div class="modal-box" @click=${(e) => e.stopPropagation()}>
+          <h2>Done Shopping?</h2>
+          <button class="menu-card" @click=${() => this._finishShopping("bought")}>Clear Bought Only</button>
+          <button class="menu-card" @click=${() => this._finishShopping("all")}>Clear Full List</button>
+          <button class="menu-card" @click=${() => this._showDoneModal = false}>Cancel</button>
         </div>
       </div>
     `;
