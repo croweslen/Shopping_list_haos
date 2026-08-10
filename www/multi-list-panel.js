@@ -153,6 +153,9 @@ class MultiListPanel extends LitElement {
   // ==================== NAVIGATION ====================
   _navigate(screen) {
     this._currentView = screen;
+     if (screen === "shopping") {
+      this._loadShoppingItems();
+  }
   }
 
   // ==================== DATA LOADING ====================
