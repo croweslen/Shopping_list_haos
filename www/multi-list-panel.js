@@ -65,6 +65,7 @@ class MultiListPanel extends LitElement {
       flex-direction: column;
       gap: 24px;
       max-width: 480px;
+      margin-top: 20px;
     }
 
     .menu-card {
