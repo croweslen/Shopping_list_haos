@@ -152,3 +152,22 @@ edit_item:
       required: false
       selector:
         text:
+
+rename_store:
+  name: Rename Store
+  description: Renames an existing store, keeping its items
+  fields:
+    old_name:
+      name: Old Store Name
+      description: The current name of the store
+      required: true
+      example: "Costco"
+      selector:
+        text:
+    new_name:
+      name: New Store Name
+      description: The new name for the store
+      required: true
+      example: "Costco Wholesale"
+      selector:
+        text:

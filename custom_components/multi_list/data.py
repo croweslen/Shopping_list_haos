@@ -44,6 +44,16 @@ def removeStore(storeName):
     del storeList[storeName]
     save_data()
 
+def renameStore(oldName, newName):
+    if oldName not in storeList:
+        raise ValueError("Store does not exist")
+    if newName == "":
+        raise ValueError("New store name cannot be blank")
+    if newName in storeList:
+        raise ValueError("A store with that name already exists")
+    storeList[newName] = storeList.pop(oldName)
+    save_data()
+
 
 def get_stores(): #this def can maybe change entierly to just a gui menu showing buttons for each stores. if no stores exist then it will just be a blank page
     return list(storeList.keys())

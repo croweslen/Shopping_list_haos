@@ -168,7 +168,6 @@ class MultiListPanel extends LitElement {
     const result = await this.hass.connection.sendMessagePromise({
       type: "multi_list/get_stores",
     });
-    console.log("loaded stores:", result);
     this._stores = result.stores;
   }
 
@@ -193,7 +192,6 @@ class MultiListPanel extends LitElement {
       type: "multi_list/get_items",
       store_name: this._shoppingStore,
     });
-    console.log("shopping items loaded:", result);
     this._shoppingItems = result.items;
   }
 
@@ -229,12 +227,48 @@ class MultiListPanel extends LitElement {
     }
   }
 
-  async _clearBought() {
+  async _renameStore() {
+    const new_name = prompt(`New name for ${this._selectedStore}:`, this._selectedStore);
+    if (!new_name || new_name === this._selectedStore) {
+      return;
+    }
 
+    try {
+      await this.hass.callService("multi_list", "rename_store", {
+        old_name: this._selectedStore,
+        new_name: new_name,
+      });
+      this._closeStoreModal();
+      this._loadStores();
+    } catch (error) {
+      alert(`Could not rename store: ${error.message}`);
+    }
+  }
+
+  async _clearBought() {
+    const confirmed = confirm(`Clear bought items from ${this._selectedStore}?`);
+    if (!confirmed) {
+      return;
+    }
+    try {
+      await this.hass.callService("multi_list", "clear_bought", { store_name: this._selectedStore });
+      this._closeStoreModal();
+    } catch (error) {
+      alert(`Could not clear bought items: ${error.message}`);
+    }
   }
 
   async _clearList() {
-
+    const confirmed = confirm(`Clear the ENTIRE list for ${this._selectedStore}? This cannot be undone.`);
+    if (!confirmed) {
+      return;
+    }
+    try {
+      await this.hass.callService("multi_list", "clear_full_list", { store_name: this._selectedStore });
+      this._closeStoreModal();
+    } catch (error) {
+      alert(`Could not clear list: ${error.message}`);
+    }
   }
 
   _openStoreModal(store) {
@@ -364,8 +398,32 @@ class MultiListPanel extends LitElement {
     }
   }
 
+  _exportList() {
+    if (!this._shoppingStore || this._shoppingItems.length === 0) {
+      alert("No items to export.");
+      return;
+    }
+
+    const lines = this._shoppingItems.map((item) => {
+      const qtyPart = item.qty > 1 ? ` x${item.qty}` : "";
+      const notesPart = item.notes ? ` (${item.notes})` : "";
+      const boughtPart = item.bought ? " [bought]" : "";
+      return `- ${item.name}${qtyPart}${notesPart}${boughtPart}`;
+    });
+
+    const text = `${this._shoppingStore} Shopping List\n\n${lines.join("\n")}`;
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${this._shoppingStore}-shopping-list.txt`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
   // ==================== MAIN RENDER (ROUTER) ====================
-  // shopping, storeManager, items, settings
   render() {
     if (this._currentView === "menu") {
       return html`${this._renderMenu()} ${this._renderStoreModal()}`;
@@ -429,6 +487,10 @@ class MultiListPanel extends LitElement {
             </div>
           `
         )}
+        <button class="menu-card" @click=${() => this._exportList()}>
+          <ha-icon icon="mdi:download"></ha-icon>
+          Export List
+        </button>
         <button class="menu-card" @click=${() => this._showDoneModal = true}>Done Shopping</button>
         ${this._renderBackButton()}
       </div>
@@ -549,8 +611,9 @@ class MultiListPanel extends LitElement {
         <div class="modal-box" @click=${(e) => e.stopPropagation()}>
           <h2>${this._selectedStore}</h2>
           <button class="menu-card" @click=${() => this._goToItemsScreen()}>View List</button>
-          <button class="menu-card">Clear Bought</button>
-          <button class="menu-card">Clear Full List</button>
+          <button class="menu-card" @click=${() => this._renameStore()}>Rename</button>
+          <button class="menu-card" @click=${() => this._clearBought()}>Clear Bought</button>
+          <button class="menu-card" @click=${() => this._clearList()}>Clear Full List</button>
           <button class="menu-card" @click=${() => this._deleteStore()}>Delete</button>
           <button class="menu-card" @click=${() => this._closeStoreModal()}>Cancel</button>
         </div>
