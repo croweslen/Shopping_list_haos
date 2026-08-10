@@ -122,7 +122,7 @@ def toggleBought(storeName, uid):
 
     raise ValueError("Item not found")
 
-async def editItem(storeName, itemName, quantity, notes, uid):
+def editItem(storeName, itemName, quantity, notes, uid):
     if storeName not in storeList:
             raise ValueError("Store does not exist")
     
