@@ -185,6 +185,7 @@ class MultiListPanel extends LitElement {
       type: "multi_list/get_items",
       store_name: this._shoppingStore,
     });
+    console.log("shopping items loaded:", result);
     this._shoppingItems = result.items;
   }
 
