@@ -393,40 +393,31 @@ class MultiListPanel extends LitElement {
   }
 
   _renderShoppingMode() {
-    return html`
-      <h1>Shopping Mode</h1>
-      <select @change=${(e) => this._selectShoppingStore(e.target.value)}>
-        <option value="">-- Select a store --</option>
-        ${this._stores.map(
-          (store) => html`
-            <option value=${store} ?selected=${store === this._shoppingStore}>
-              ${store}
-            </option>
-          `
-        )}
-      </select>
+  return html`
+    <h1>Shopping Mode</h1>
+    <select @change=${(e) => this._selectShoppingStore(e.target.value)}>
+      <option value="">-- Select a store --</option>
+      ${this._stores.map(
+        (store) => html`
+          <option value=${store} ?selected=${store === this._shoppingStore}>
+            ${store}
+          </option>
+        `
+      )}
+    </select>
 
-      <div class="menu">
-        ${this._shoppingItems.map(
-          (item) => html`
-            <div class="menu-card" @click=${() => this._toggleBought(item)}>
-              ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
-            </div>
-          `
-        )}
-        ${[...this._shoppingItems].sort((a, b) => a.bought - b.bought).map(
-            (item) => html`
-              <div class="menu-card ${item.bought ? 'bought-item' : ''}" @click=${() => this._toggleBought(item)}>
-                ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
-              </div>
-            `
-          )}
+    <div class="menu">
+      ${[...this._shoppingItems].sort((a, b) => a.bought - b.bought).map(
+        (item) => html`
+          <div class="menu-card ${item.bought ? 'bought-item' : ''}" @click=${() => this._toggleBought(item)}>
+            ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+          </div>
+        `
+      )}
       ${this._renderBackButton()}
-      </div>
-
-     
-    `;
-  }
+    </div>
+  `;
+}
 
   _renderStoreManager() {
     return html`
