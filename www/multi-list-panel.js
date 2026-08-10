@@ -329,6 +329,18 @@ class MultiListPanel extends LitElement {
     this._loadShoppingItems();
   }
 
+  async _toggleBought(item) {
+    try {
+      await this.hass.callService("multi_list", "toggle_bought", {
+        store_name: this._shoppingStore,
+        uid: item.uid,
+      });
+      this._loadShoppingItems();
+    } catch (error) {
+      alert(`Could not update item: ${error.message}`);
+    }
+  }
+
   // ==================== MAIN RENDER (ROUTER) ====================
   // shopping, storeManager, items, settings
   render() {
@@ -375,8 +387,29 @@ class MultiListPanel extends LitElement {
   _renderShoppingMode() {
     return html`
       <h1>Shopping Mode</h1>
+      <select @change=${(e) => this._selectShoppingStore(e.target.value)}>
+        <option value="">-- Select a store --</option>
+        ${this._stores.map(
+          (store) => html`
+            <option value=${store} ?selected=${store === this._shoppingStore}>
+              ${store}
+            </option>
+          `
+        )}
+      </select>
+
+      <div class="menu">
+        ${this._shoppingItems.map(
+          (item) => html`
+            <div class="menu-card" @click=${() => this._toggleBought(item)}>
+              ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+            </div>
+          `
+        )}
+      </div>
+
       ${this._renderBackButton()}
-    `; // placeholder, still to be built out
+    `;
   }
 
   _renderStoreManager() {
