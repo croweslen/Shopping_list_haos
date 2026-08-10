@@ -148,6 +148,10 @@ class MultiListPanel extends LitElement {
       border-radius: 8px;
       z-index: 2000;
     }
+    
+    .bought-item{
+      color: #4caf50
+    }
   `;
 
   // ==================== NAVIGATION ====================
@@ -410,9 +414,17 @@ class MultiListPanel extends LitElement {
             </div>
           `
         )}
+        ${[...this._shoppingItems].sort((a, b) => a.bought - b.bought).map(
+            (item) => html`
+              <div class="menu-card ${item.bought ? 'bought-item' : ''}" @click=${() => this._toggleBought(item)}>
+                ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+              </div>
+            `
+          )}
+      ${this._renderBackButton()}
       </div>
 
-      ${this._renderBackButton()}
+     
     `;
   }
 
