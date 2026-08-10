@@ -366,6 +366,30 @@ class MultiListPanel extends LitElement {
     }
   }
 
+  _exportList() {
+    if (!this._selectedListStore || this._listItems.length === 0) {
+      alert("No items to export.");
+      return;
+    }
+
+    const lines = this._listItems.map((item) => {
+      const qtyPart = item.qty > 1 ? ` x${item.qty}` : "";
+      const notesPart = item.notes ? ` (${item.notes})` : "";
+      return `- ${item.name}${qtyPart}${notesPart}`;
+    });
+
+    const text = `${this._selectedListStore} Shopping List\n\n${lines.join("\n")}`;
+    const blob = new Blob([text], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${this._selectedListStore}-shopping-list.txt`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+  }
+
   // ==================== SHOPPING MODE ACTIONS ====================
   _selectShoppingStore(storeName) {
     this._shoppingStore = storeName;
@@ -396,31 +420,6 @@ class MultiListPanel extends LitElement {
     } catch (error) {
       alert(`Could not clear list: ${error.message}`);
     }
-  }
-
-  _exportList() {
-    if (!this._shoppingStore || this._shoppingItems.length === 0) {
-      alert("No items to export.");
-      return;
-    }
-
-    const lines = this._shoppingItems.map((item) => {
-      const qtyPart = item.qty > 1 ? ` x${item.qty}` : "";
-      const notesPart = item.notes ? ` (${item.notes})` : "";
-      const boughtPart = item.bought ? " [bought]" : "";
-      return `- ${item.name}${qtyPart}${notesPart}${boughtPart}`;
-    });
-
-    const text = `${this._shoppingStore} Shopping List\n\n${lines.join("\n")}`;
-    const blob = new Blob([text], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${this._shoppingStore}-shopping-list.txt`;
-    a.click();
-
-    URL.revokeObjectURL(url);
   }
 
   // ==================== MAIN RENDER (ROUTER) ====================
@@ -487,10 +486,6 @@ class MultiListPanel extends LitElement {
             </div>
           `
         )}
-        <button class="menu-card" @click=${() => this._exportList()}>
-          <ha-icon icon="mdi:download"></ha-icon>
-          Export List
-        </button>
         <button class="menu-card" @click=${() => this._showDoneModal = true}>Done Shopping</button>
         ${this._renderBackButton()}
       </div>
@@ -568,6 +563,10 @@ class MultiListPanel extends LitElement {
               </div>
             `
           )}
+          <button class="menu-card" @click=${() => this._exportList()}>
+            <ha-icon icon="mdi:download"></ha-icon>
+            Export List
+          </button>
         </div>
       </div>
 
