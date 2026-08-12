@@ -1,26 +1,33 @@
 import json
 import uuid
 
-DATA_FILE = "/config/custom_components/multi_list/shopping_data.json"
+DATA_FILE = None
 storeList = {}
 
 ########## SAVE DATA STUFF ###################
+
+def set_data_file_path(path):
+    global DATA_FILE
+    DATA_FILE = path
+
 def save_data():
     with open(DATA_FILE, "w") as file:
-            json.dump(storeList, file, indent=4)
+        json.dump(storeList, file, indent=4)
+
 def load_data():
     global storeList
-
     try:
-        with open(DATA_FILE,  "r") as file:
+        with open(DATA_FILE, "r") as file:
             storeList = json.load(file)
     except FileNotFoundError:
-            storeList = {}
-async def async_load_data(hass):
-        await hass.async_add_executor_job(load_data)
-async def async_save_data(hass):
-        await hass.async_add_executor_job(save_data)
+        storeList = {}
 
+async def async_load_data(hass):
+    set_data_file_path(hass.config.path("multi_list_shopping_data.json"))
+    await hass.async_add_executor_job(load_data)
+
+async def async_save_data(hass):
+    await hass.async_add_executor_job(save_data)
 
 ####### STORE FUNCTIONS #########
 
