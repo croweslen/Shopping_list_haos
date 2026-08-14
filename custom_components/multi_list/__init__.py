@@ -70,7 +70,8 @@ async def handle_add_item(call):
     item_name = call.data["item_name"]
     quantity = call.data.get("quantity", 1)
     notes = call.data.get("notes", "")
-    addItem(store_name, item_name, quantity, notes)
+    category = call.data.get("category", "")
+    addItem(store_name, item_name, quantity, notes, category)
 
 async def handle_rem_item(call):
     store_name = call.data["store_name"]
@@ -114,5 +115,8 @@ async def handle_edit_item(call):
     item_name = call.data["item_name"]
     quantity = call.data.get("quantity", 1)
     notes = call.data.get("notes", "")
-    editItem(store_name, item_name, quantity, notes, uid)
+    category = call.data.get("category", "")
+    editItem(store_name, item_name, quantity, notes, uid, category)
+
+    
 

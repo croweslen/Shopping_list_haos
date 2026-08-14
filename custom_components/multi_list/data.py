@@ -68,25 +68,23 @@ def get_stores(): #this def can maybe change entierly to just a gui menu showing
 ####### LIST FUNCTIONS ############
 
 
-def addItem(storeName, itemName, quantity=1, notes=""):
+def addItem(storeName, itemName, quantity=1, notes="", category=""):
     if storeName == "":
         raise ValueError("Store name cannot be blank")
-
     if storeName not in storeList:
         raise ValueError("Store does not exist")
-    
     if itemName == "":
         raise ValueError("Item Name cannot be blank")
-    
-    if quantity <=0:
+    if quantity <= 0:
         raise ValueError("quantity cannot be less than 1")
-        
+
     new_Item = {
-         "uid": str(uuid.uuid4()),
-         "name": itemName,
-         "qty": quantity,
-         "notes": notes,
-         "bought": False
+        "uid": str(uuid.uuid4()),
+        "name": itemName,
+        "qty": quantity,
+        "notes": notes,
+        "category": category,
+        "bought": False
     }
 
     storeList[storeName].append(new_Item)
@@ -139,16 +137,17 @@ def toggleBought(storeName, uid):
 
     raise ValueError("Item not found")
 
-def editItem(storeName, itemName, quantity, notes, uid):
+def editItem(storeName, itemName, quantity, notes, uid, category=""):
     if storeName not in storeList:
-            raise ValueError("Store does not exist")
-    
+        raise ValueError("Store does not exist")
+
     for item in storeList[storeName]:
         if item["uid"] == uid:
             item["name"] = itemName
             item["qty"] = quantity
             item["notes"] = notes
+            item["category"] = category
             save_data()
             return
-    
-        raise ValueError("Item not found")
+
+    raise ValueError("Item not found")

@@ -54,6 +54,12 @@ add_item:
       required: false
       selector:
         text:
+    category:
+      name: Category
+      description: Optional category label for this item (e.g. Produce, Frozen)
+      required: false
+      selector:
+        text:
          
 remove_item:
   name: Remove Item
@@ -149,6 +155,12 @@ edit_item:
     notes:
       name: notes
       description: Any notes about the given item
+      required: false
+      selector:
+        text:
+    category:
+      name: Category
+      description: Optional category label for this item (e.g. Produce, Frozen)
       required: false
       selector:
         text:
