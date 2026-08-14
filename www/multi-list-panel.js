@@ -613,13 +613,17 @@ class MultiListPanel extends LitElement {
             @input=${(e) => this._newItemNotes = e.target.value}
             @keydown=${(e) => { if (e.key === "Enter") this._submitNewItem(); }}
           />
-          <input
-            type="text"
-            placeholder="Category (e.g. Produce, Frozen)"
+        <select
             .value=${this._newItemCategory}
-            @input=${(e) => this._newItemCategory = e.target.value}
-            @keydown=${(e) => { if (e.key === "Enter") this._submitNewItem(); }}
-          />
+            @change=${(e) => this._newItemCategory = e.target.value}
+          >
+            <option value="">-- No category --</option>
+            <option value="Produce">Produce</option>
+            <option value="Dairy">Dairy</option>
+            <option value="Meat">Meat</option>
+            <option value="Frozen">Frozen</option>
+            <option value="General">General</option>
+          </select>
           <div class="button-row">
             <button class="menu-card" @click=${() => this._submitNewItem()}>Submit</button>
             <button class="menu-card" @click=${() => this._clearNewItem()}>Clear</button>
@@ -722,12 +726,17 @@ class MultiListPanel extends LitElement {
             .value=${this._selectedItem.notes}
             @input=${(e) => this._selectedItem = { ...this._selectedItem, notes: e.target.value }}
           />
-          <input
-            type="text"
-            placeholder="Category (e.g. Produce, Frozen)"
-            .value=${this._selectedItem.category || ""}
-            @input=${(e) => this._selectedItem = { ...this._selectedItem, category: e.target.value }}
-          />
+          <select
+              .value=${this._selectedItem.category || ""}
+              @change=${(e) => this._selectedItem = { ...this._selectedItem, category: e.target.value }}
+            >
+              <option value="">-- No category --</option>
+              <option value="Produce">Produce</option>
+              <option value="Dairy">Dairy</option>
+              <option value="Meat">Meat</option>
+              <option value="Frozen">Frozen</option>
+              <option value="General">General</option>
+            </select>
           <button class="menu-card" @click=${() => this._saveItemEdit()}>Save</button>
           <button class="menu-card" @click=${() => this._deleteItem()}>Delete</button>
           <button class="menu-card" @click=${() => this._closeItemModal()}>Cancel</button>
