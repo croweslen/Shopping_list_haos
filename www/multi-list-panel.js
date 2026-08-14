@@ -13,6 +13,7 @@ class MultiListPanel extends LitElement {
     _newItemName: { state: true },
     _newItemQty: { state: true },
     _newItemNotes: { state: true },
+    _newItemCategory: { state: true },
     _selectedListStore: { state: true },
     _showConfirmation: { state: true },
     _selectedItem: { state: true },
@@ -33,6 +34,7 @@ class MultiListPanel extends LitElement {
     this._newItemName = "";
     this._newItemQty = "";
     this._newItemNotes = "";
+    this._newItemCategory = "";
     this._selectedListStore = "";
     this._showConfirmation = false;
     this._selectedItem = null;
@@ -153,6 +155,22 @@ class MultiListPanel extends LitElement {
     .bought-item {
       color: #4caf50;
     }
+
+    .category-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .category-header {
+      font-size: 16px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--secondary-text-color, #aaa);
+      margin: 8px 0 -4px 4px;
+    }
   `;
 
   // ==================== NAVIGATION ====================
@@ -193,6 +211,32 @@ class MultiListPanel extends LitElement {
       store_name: this._shoppingStore,
     });
     this._shoppingItems = result.items;
+  }
+
+  // ==================== GROUPING HELPER ====================
+  // Groups a flat list of items by their category field, sorted alphabetically
+  // by category name. Items with no category are grouped under "General" and
+  // sorted to the end. Within a category, `sortFn` (optional) controls item order.
+  _groupByCategory(items, sortFn) {
+    const groups = {};
+    items.forEach((item) => {
+      const key = item.category && item.category.trim() ? item.category.trim() : "General";
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(item);
+    });
+
+    const categoryNames = Object.keys(groups).sort((a, b) => {
+      if (a === "General") return 1;
+      if (b === "General") return -1;
+      return a.localeCompare(b);
+    });
+
+    return categoryNames.map((name) => ({
+      category: name,
+      items: sortFn ? [...groups[name]].sort(sortFn) : groups[name],
+    }));
   }
 
   // ==================== STORE ACTIONS ====================
@@ -298,6 +342,7 @@ class MultiListPanel extends LitElement {
     this._newItemName = "";
     this._newItemQty = "";
     this._newItemNotes = "";
+    this._newItemCategory = "";
   }
 
   async _submitNewItem() {
@@ -311,6 +356,7 @@ class MultiListPanel extends LitElement {
         item_name: this._newItemName,
         quantity: Number(this._newItemQty) || 1,
         notes: this._newItemNotes || "",
+        category: this._newItemCategory || "",
       });
       this._clearNewItem();
       this._loadListItems();
@@ -345,6 +391,7 @@ class MultiListPanel extends LitElement {
         item_name: this._selectedItem.name,
         quantity: Number(this._selectedItem.qty) || 1,
         notes: this._selectedItem.notes || "",
+        category: this._selectedItem.category || "",
       });
       this._closeItemModal();
       this._loadListItems();
@@ -372,13 +419,17 @@ class MultiListPanel extends LitElement {
       return;
     }
 
-    const lines = this._listItems.map((item) => {
-      const qtyPart = item.qty > 1 ? ` x${item.qty}` : "";
-      const notesPart = item.notes ? ` (${item.notes})` : "";
-      return `- ${item.name}${qtyPart}${notesPart}`;
+    const grouped = this._groupByCategory(this._listItems);
+    const sections = grouped.map((group) => {
+      const lines = group.items.map((item) => {
+        const qtyPart = item.qty > 1 ? ` x${item.qty}` : "";
+        const notesPart = item.notes ? ` (${item.notes})` : "";
+        return `- ${item.name}${qtyPart}${notesPart}`;
+      });
+      return `${group.category}\n${lines.join("\n")}`;
     });
 
-    const text = `${this._selectedListStore} Shopping List\n\n${lines.join("\n")}`;
+    const text = `${this._selectedListStore} Shopping List\n\n${sections.join("\n\n")}`;
     const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
 
@@ -465,6 +516,8 @@ class MultiListPanel extends LitElement {
   }
 
   _renderShoppingMode() {
+    const grouped = this._groupByCategory(this._shoppingItems, (a, b) => a.bought - b.bought);
+
     return html`
       <h1>Shopping Mode</h1>
       <select @change=${(e) => this._selectShoppingStore(e.target.value)}>
@@ -479,10 +532,17 @@ class MultiListPanel extends LitElement {
       </select>
 
       <div class="menu">
-        ${[...this._shoppingItems].sort((a, b) => a.bought - b.bought).map(
-          (item) => html`
-            <div class="menu-card ${item.bought ? 'bought-item' : ''}" @click=${() => this._toggleBought(item)}>
-              ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+        ${grouped.map(
+          (group) => html`
+            <div class="category-group">
+              <div class="category-header">${group.category}</div>
+              ${group.items.map(
+                (item) => html`
+                  <div class="menu-card ${item.bought ? 'bought-item' : ''}" @click=${() => this._toggleBought(item)}>
+                    ${item.bought ? "✓ " : ""}${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+                  </div>
+                `
+              )}
             </div>
           `
         )}
@@ -514,6 +574,8 @@ class MultiListPanel extends LitElement {
   }
 
   _renderItemsScreen() {
+    const grouped = this._groupByCategory(this._listItems);
+
     return html`
       <h1>List Manager</h1>
       <select @change=${(e) => this._selectListStore(e.target.value)}>
@@ -551,6 +613,13 @@ class MultiListPanel extends LitElement {
             @input=${(e) => this._newItemNotes = e.target.value}
             @keydown=${(e) => { if (e.key === "Enter") this._submitNewItem(); }}
           />
+          <input
+            type="text"
+            placeholder="Category (e.g. Produce, Frozen)"
+            .value=${this._newItemCategory}
+            @input=${(e) => this._newItemCategory = e.target.value}
+            @keydown=${(e) => { if (e.key === "Enter") this._submitNewItem(); }}
+          />
           <div class="button-row">
             <button class="menu-card" @click=${() => this._submitNewItem()}>Submit</button>
             <button class="menu-card" @click=${() => this._clearNewItem()}>Clear</button>
@@ -559,10 +628,17 @@ class MultiListPanel extends LitElement {
         </div>
         <div class="items-column">
           <h3>Current Items</h3>
-          ${this._listItems.map(
-            (item) => html`
-              <div class="menu-card" @click=${() => this._openItemModal(item)}>
-                ${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+          ${grouped.map(
+            (group) => html`
+              <div class="category-group">
+                <div class="category-header">${group.category}</div>
+                ${group.items.map(
+                  (item) => html`
+                    <div class="menu-card" @click=${() => this._openItemModal(item)}>
+                      ${item.name}${item.qty > 1 ? ` x${item.qty}` : ""}${item.notes ? ` (${item.notes})` : ""}
+                    </div>
+                  `
+                )}
               </div>
             `
           )}
@@ -645,6 +721,12 @@ class MultiListPanel extends LitElement {
             type="text"
             .value=${this._selectedItem.notes}
             @input=${(e) => this._selectedItem = { ...this._selectedItem, notes: e.target.value }}
+          />
+          <input
+            type="text"
+            placeholder="Category (e.g. Produce, Frozen)"
+            .value=${this._selectedItem.category || ""}
+            @input=${(e) => this._selectedItem = { ...this._selectedItem, category: e.target.value }}
           />
           <button class="menu-card" @click=${() => this._saveItemEdit()}>Save</button>
           <button class="menu-card" @click=${() => this._deleteItem()}>Delete</button>
