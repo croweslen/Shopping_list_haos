@@ -535,18 +535,21 @@ class MultiListPanel extends LitElement {
             placeholder="Item name"
             .value=${this._newItemName}
             @input=${(e) => this._newItemName = e.target.value}
+            @keydown=${(e) => { if (e.key === "Enter") this._submitNewItem(); }}
           />
           <input
             type="number"
             placeholder="Item Quantity"
             .value=${this._newItemQty}
             @input=${(e) => this._newItemQty = e.target.value}
+            @keydown=${(e) => { if (e.key === "Enter") this._submitNewItem(); }}
           />
           <input
             type="text"
             placeholder="Item notes"
             .value=${this._newItemNotes}
             @input=${(e) => this._newItemNotes = e.target.value}
+            @keydown=${(e) => { if (e.key === "Enter") this._submitNewItem(); }}
           />
           <div class="button-row">
             <button class="menu-card" @click=${() => this._submitNewItem()}>Submit</button>
