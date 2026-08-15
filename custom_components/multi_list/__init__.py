@@ -1,5 +1,7 @@
 import logging
 
+from homeassistant.components.http import StaticPathConfig
+
 from .data import remItem
 from .data import createStore
 from .data import removeStore
@@ -25,11 +27,13 @@ async def async_setup(hass, config):
 
     await async_load_data(hass)
 
-    hass.http.register_static_path(
-        "/multi_list_static/multi-list-panel.js",
-        hass.config.path("custom_components/multi_list/www/multi-list-panel.js"),
-        cache_headers=False,
-    )
+    await hass.http.async_register_static_paths([
+        StaticPathConfig(
+            "/multi_list_static/multi-list-panel.js",
+            hass.config.path("custom_components/multi_list/www/multi-list-panel.js"),
+            False,
+        )
+    ])
 
     hass.services.async_register("multi_list", "create_store", handle_create_store)
     hass.services.async_register("multi_list", "remove_store", handle_remove_store)
