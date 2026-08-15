@@ -25,6 +25,12 @@ async def async_setup(hass, config):
 
     await async_load_data(hass)
 
+    hass.http.register_static_path(
+        "/multi_list_static/multi-list-panel.js",
+        hass.config.path("custom_components/multi_list/www/multi-list-panel.js"),
+        cache_headers=False,
+    )
+
     hass.services.async_register("multi_list", "create_store", handle_create_store)
     hass.services.async_register("multi_list", "remove_store", handle_remove_store)
     hass.services.async_register("multi_list", "add_item", handle_add_item)
@@ -36,16 +42,15 @@ async def async_setup(hass, config):
     hass.services.async_register("multi_list", "rename_store", handle_rename_store)
 
     await panel_custom.async_register_panel(
-    hass,
+        hass,
         webcomponent_name="multi-list-panel",
         frontend_url_path="multi-list",
         sidebar_title="Multi List",
         sidebar_icon="mdi:list-box-outline",
-        module_url="/local/multi-list-panel.js",
+        module_url="/multi_list_static/multi-list-panel.js",
         embed_iframe=False,
         require_admin=False,
     )
-
 
     websocket_api.async_register_command(hass, handle_ws_get_stores)
     websocket_api.async_register_command(hass, handle_ws_get_items)
@@ -117,6 +122,3 @@ async def handle_edit_item(call):
     notes = call.data.get("notes", "")
     category = call.data.get("category", "")
     editItem(store_name, item_name, quantity, notes, uid, category)
-
-    
-
